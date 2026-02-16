@@ -21,7 +21,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   overflow: hidden;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* keep sidebar on right */
 }
 
 .main {
@@ -90,7 +90,7 @@ button.review-btn:hover {
   background: #7b1fa2;
 }
 
-/* Sidebar with grid 4 per row */
+/* Sidebar on the right */
 .sidebar {
   width: 200px;
   background: #f5f5f5;
@@ -101,7 +101,7 @@ button.review-btn:hover {
   gap: 8px;
   max-height: 650px;
   overflow-y: auto;
-  min-width: 180px;
+  order: 1; /* ensure it stays on the right */
 }
 
 .sidebar button {
@@ -150,7 +150,7 @@ button.review-btn:hover {
 /* Mobile responsiveness */
 @media screen and (max-width: 800px) {
   .container {
-    flex-direction: column;
+    flex-direction: column; /* stack sidebar below on small screens */
   }
   .sidebar {
     width: 100%;
@@ -184,7 +184,9 @@ button.review-btn:hover {
 </div>
 
 <script>
-// 50 sample questions
+// Your 50 questions array remains the same
+// ... (same as previous code)
+
 const questions = [
   {q:"Which of the following is the brain of the computer?", options:["RAM","CPU","Hard Disk","Monitor"], answer:0},
   {q:"Which is a non-volatile memory?", options:["RAM","ROM","Cache","Registers"], answer:1},
@@ -238,13 +240,13 @@ const questions = [
   {q:"Which one is used to compress files?", options:["WinRAR","7-Zip","WinZip","All of the above"], answer:3},
 ];
 
+
 // Status tracking
 let current = 0;
 let userAnswers = new Array(questions.length);
-let questionStatus = new Array(questions.length).fill("not-visited"); // not-visited, visited, answered, review, review-answered
-let timeLeft = 60 * 60; // 60 minutes in seconds
+let questionStatus = new Array(questions.length).fill("not-visited");
+let timeLeft = 60 * 60; // 60 minutes
 
-// Load sidebar
 function loadSidebar() {
   const sb = document.getElementById("questionNumbers");
   sb.innerHTML = "";
@@ -257,7 +259,6 @@ function loadSidebar() {
   });
 }
 
-// Load question
 function loadQuestion() {
   const q = questions[current];
   document.getElementById("question").innerText = (current + 1) + ". " + q.q;
@@ -278,7 +279,6 @@ function loadQuestion() {
   updateSidebar();
 }
 
-// Select option
 function selectOption(i) {
   userAnswers[current] = i;
   questions[current].options.forEach((_, idx) => {
@@ -289,7 +289,6 @@ function selectOption(i) {
   });
 }
 
-// Save & Next
 function saveNext() {
   if(userAnswers[current] !== undefined){
     if(questionStatus[current]==="review") questionStatus[current] = "review-answered";
@@ -300,18 +299,15 @@ function saveNext() {
   nextQuestion();
 }
 
-// Mark for Review
 function markReview() {
   if(userAnswers[current] !== undefined) questionStatus[current] = "review-answered";
   else questionStatus[current] = "review";
   nextQuestion();
 }
 
-// Next / Previous
 function nextQuestion() { if(current < questions.length-1) { current++; loadQuestion(); } }
 function prevQuestion() { if(current > 0) { current--; loadQuestion(); } }
 
-// Update sidebar colors
 function updateSidebar() {
   questions.forEach((_, i)=>{
     const btn = document.getElementById("qBtn"+i);
@@ -326,14 +322,12 @@ function updateSidebar() {
   });
 }
 
-// Finish test
 function finishTest(){
   let score=0;
   userAnswers.forEach((ans,i)=>{ if(ans===questions[i].answer) score++; });
   document.getElementById("result").innerText = "Final Score: "+score+" / "+questions.length;
 }
 
-// Timer with MM:SS
 function startTimer(){
   const timerInterval = setInterval(()=>{
     if(timeLeft <= 0){
