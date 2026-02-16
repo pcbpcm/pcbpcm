@@ -2,7 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>50 Question Online MCQ Test with Review</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online MCQ Test</title>
+
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -14,7 +16,8 @@ body {
 
 .container {
   display: flex;
-  width: 950px;
+  width: 1000px;
+  max-width: 100%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -24,13 +27,14 @@ body {
 .main {
   flex: 1;
   padding: 25px;
-  position: relative;
+  min-width: 300px;
 }
 
 #timer {
   text-align: right;
   font-weight: bold;
   color: red;
+  font-size: 18px;
 }
 
 .question {
@@ -47,23 +51,14 @@ body {
   border: 1px solid #ddd;
 }
 
-.options label.correct {
-  background: #c8e6c9;
-  border-color: #4caf50;
-}
-
-.options label.wrong {
-  background: #ffcdd2;
-  border-color: #f44336;
-}
-
 .buttons {
   margin-top: 20px;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
-button.action-btn {
+button {
   padding: 8px 15px;
   border: none;
   border-radius: 6px;
@@ -72,163 +67,140 @@ button.action-btn {
   color: white;
 }
 
-button.action-btn:hover {
-  background: #45a049;
+button:hover {
+  opacity: 0.9;
 }
 
-button.review-btn {
+.review-btn {
   background: #9c27b0;
 }
 
-button.review-btn:hover {
-  background: #7b1fa2;
-}
-
-/* Sidebar with grid 4 per row */
 .sidebar {
-  width: 200px;
+  width: 220px;
   background: #f5f5f5;
   padding: 10px;
   border-left: 1px solid #ddd;
   display: grid;
-  grid-template-columns: repeat(4, 40px);
+  grid-template-columns: repeat(4, 45px);
   gap: 8px;
   max-height: 650px;
   overflow-y: auto;
 }
 
 .sidebar button {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  border: 1px solid #aaa;
-  cursor: pointer;
-  background: #fff;
+  width: 45px;
+  height: 45px;
   font-weight: bold;
 }
 
-.sidebar button.not-visited {
-  background: #fff;
-  color: black;
-}
+.not-visited { background: #fff; color: black; }
+.visited { background: #f44336; color: white; }
+.answered { background: #4caf50; color: white; }
+.review { background: #9c27b0; color: white; }
 
-.sidebar button.visited {
-  background: #f44336; /* red */
-  color: white;
-}
-
-.sidebar button.answered {
-  background: #4caf50; /* green */
-  color: white;
-}
-
-.sidebar button.review {
-  background: #9c27b0; /* purple */
-  color: white;
-}
-
-.sidebar button.review-answered::after {
-  content: "✔️";
-  font-size: 12px;
-  margin-left: 2px;
-}
 #result {
   text-align: center;
   font-weight: bold;
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 18px;
+}
+
+#homeBtn {
+  display: none;
+  margin-top: 15px;
+  background: #2196F3;
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
-  <!-- Main area -->
-  <div class="main">
-    <div id="timer">Time Left: 60</div>
-    <div class="question" id="question"></div>
-    <div class="options" id="options"></div>
 
-    <div class="buttons">
-      <button class="action-btn" onclick="prevQuestion()">Previous</button>
-      <button class="action-btn" onclick="saveNext()">Save & Next</button>
-      <button class="review-btn" onclick="markReview()">Mark for Review</button>
-      <button class="action-btn" onclick="finishTest()">Finish</button>
-    </div>
+<div class="main">
+  <div id="timer">Time Left: 60:00</div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
 
-    <div id="result"></div>
+  <div class="buttons">
+    <button onclick="prevQuestion()">Previous</button>
+    <button onclick="saveNext()">Save & Next</button>
+    <button class="review-btn" onclick="markReview()">Mark for Review</button>
+    <button onclick="finishTest()">Finish Test</button>
   </div>
 
-  <!-- Sidebar -->
-  <div class="sidebar" id="questionNumbers"></div>
+  <button id="homeBtn" onclick="goHome()">Go To Home Page</button>
+
+  <div id="result"></div>
+</div>
+
+<div class="sidebar" id="questionNumbers"></div>
+
 </div>
 
 <script>
-// 50 sample questions
 const questions = [
-  {q:"Which of the following is the brain of the computer?", options:["RAM","CPU","Hard Disk","Monitor"], answer:0},
-  {q:"Which is a non-volatile memory?", options:["RAM","ROM","Cache","Registers"], answer:1},
-  {q:"Which of the following is an input device?", options:["Keyboard","Monitor","Printer","Speaker"], answer:0},
-  {q:"Which of the following is an output device?", options:["Mouse","Monitor","Keyboard","Scanner"], answer:1},
-  {q:"Which of the following is used to store large amounts of data permanently?", options:["RAM","Hard Disk","Cache","CPU"], answer:1},
-  {q:"Which software is used to browse the Internet?", options:["MS Word","Browser","MS Excel","MS PowerPoint"], answer:1},
-  {q:"Which of the following is a type of computer network?", options:["LAN","WAN","MAN","All of the above"], answer:3},
-  {q:"Which one is used for email communication?", options:["MS Excel","MS Word","MS Outlook","Notepad"], answer:2},
-  {q:"Which of the following is an operating system?", options:["Windows","MS Word","Excel","PowerPoint"], answer:0},
-  {q:"Which of the following is used to perform calculations in MS Excel?", options:["Cell","Formula","Table","Graph"], answer:1},
-  {q:"What is the shortcut key for Copy in Windows?", options:["Ctrl + C","Ctrl + V","Ctrl + X","Ctrl + P"], answer:0},
-  {q:"What is the shortcut key for Paste in Windows?", options:["Ctrl + P","Ctrl + V","Ctrl + C","Ctrl + X"], answer:0},
-  {q:"Which key is used to delete a character before the cursor?", options:["Delete","Backspace","Esc","Enter"], answer:1},
-  {q:"Which one is used to protect a computer from viruses?", options:["Firewall","Antivirus","Disk Cleanup","Notepad"], answer:1},
-  {q:"What is the full form of HTTP?", options:["HyperText Transfer Protocol","HighText Transfer Protocol","HyperText Transmission Program","None of the above"], answer:0},
-  {q:"Which of the following is a spreadsheet software?", options:["MS Word","MS Excel","MS PowerPoint","MS Access"], answer:1},
-  {q:"Which of the following is used to create presentations?", options:["MS Word","MS Excel","MS PowerPoint","MS Access"], answer:2},
-  {q:"Which of the following is an example of an email provider?", options:["Gmail","Yahoo Mail","Outlook","All of the above"], answer:3},
-  {q:"Which is used to store temporary data for fast processing?", options:["RAM","ROM","Hard Disk","Flash Drive"], answer:0},
-  {q:"Which of the following is a type of malware?", options:["Virus","Worm","Trojan","All of the above"], answer:3},
-  {q:"Which is the most common file format for MS Word?", options:[".xls",".ppt",".doc/.docx",".txt"], answer:2},
-  {q:"Which is the most common file format for MS Excel?", options:[".doc",".xls/.xlsx",".ppt",".txt"], answer:1},
-  {q:"Which is the most common file format for MS PowerPoint?", options:[".ppt/.pptx",".xls",".doc",".txt"], answer:0},
-  {q:"Which of the following is a search engine?", options:["Google","Yahoo","Bing","All of the above"], answer:3},
-  {q:"Which of the following is used to present data graphically in Excel?", options:["Chart","Table","Cell","Formula"], answer:0},
-  {q:"What is the extension of Notepad files?", options:[".txt",".doc",".xls",".ppt"], answer:0},
-  {q:"Which is a wireless communication technology?", options:["LAN","Wi-Fi","Ethernet","Cable"], answer:1},
-  {q:"Which one is used to format a text in Word?", options:["Font","Bold","Italic","All of the above"], answer:3},
-  {q:"Which key combination is used to undo an action?", options:["Ctrl + Z","Ctrl + Y","Ctrl + X","Ctrl + C"], answer:0},
-  {q:"Which key combination is used to redo an action?", options:["Ctrl + Z","Ctrl + Y","Ctrl + X","Ctrl + C"], answer:1},
-  {q:"Which is the shortcut key to select all text?", options:["Ctrl + S","Ctrl + A","Ctrl + P","Ctrl + V"], answer:1},
-  {q:"Which of the following is used to send messages in real-time?", options:["Email","Instant Messaging","Word Document","PowerPoint"], answer:1},
-  {q:"Which one is used for database management?", options:["MS Word","MS Excel","MS Access","MS PowerPoint"], answer:2},
-  {q:"Which of the following is a part of the CPU?", options:["ALU","Control Unit","Registers","All of the above"], answer:3},
-  {q:"Which of the following is a secondary storage device?", options:["RAM","Hard Disk","Cache","Register"], answer:1},
-  {q:"Which of the following is not a browser?", options:["Google Chrome","Mozilla Firefox","MS Word","Microsoft Edge"], answer:2},
-  {q:"Which key combination is used to open a new document in MS Word?", options:["Ctrl + N","Ctrl + O","Ctrl + S","Ctrl + P"], answer:0},
-  {q:"Which one is used to send an email?", options:["Gmail","Outlook","Yahoo Mail","All of the above"], answer:3},
-  {q:"Which of the following is used to protect data from unauthorized access?", options:["Password","Antivirus","Firewall","Cache"], answer:0},
-  {q:"Which device is used to connect computers in a network?", options:["Router","Printer","Scanner","Keyboard"], answer:0},
-  {q:"Which of the following is a cloud storage service?", options:["Google Drive","OneDrive","Dropbox","All of the above"], answer:3},
-  {q:"What does GUI stand for?", options:["Graphical User Interface","General User Interaction","Graphical Utility Input","General Utility Interface"], answer:0},
-  {q:"Which of the following is a presentation layout in PowerPoint?", options:["Title Slide","Content Slide","Blank Slide","All of the above"], answer:3},
-  {q:"Which of the following is a type of computer virus?", options:["Macro Virus","Boot Virus","File Infector","All of the above"], answer:3},
-  {q:"Which of the following is used to organize emails?", options:["Folders","Labels","Categories","All of the above"], answer:3},
-  {q:"Which of the following is a mobile operating system?", options:["Android","Windows","Linux","MS DOS"], answer:1},
-  {q:"Which is used to create tables in MS Word?", options:["Insert > Table","Home > Table","Format > Table","View > Table"], answer:0},
-  {q:"Which of the following is used to view webpage source code?", options:["View > Source","Ctrl + U","Right-click > View Page Source","All of the above"], answer:3},
-  {q:"Which of the following is used to refresh a webpage?", options:["F5","Ctrl + R","Both a and b","None"], answer:2},
-  {q:"Which one is used to compress files?", options:["WinRAR","7-Zip","WinZip","All of the above"], answer:3},
-
+  {q:"Which component performs arithmetic operations in a computer?", options:["RAM","ALU","ROM","Hard Disk"], answer:1},
+  {q:"Which of the following is volatile memory?", options:["ROM","RAM","Hard Disk","Flash Drive"], answer:1},
+  {q:"Which device is used to point and click on-screen items?", options:["Keyboard","Mouse","Monitor","Scanner"], answer:1},
+  {q:"Which of the following displays information to the user?", options:["Printer","Monitor","Keyboard","Scanner"], answer:1},
+  {q:"Which storage device is primarily used for permanent storage?", options:["RAM","Hard Disk","Cache","Registers"], answer:1},
+  {q:"Which software is used to access websites?", options:["MS Excel","Browser","MS Word","PowerPoint"], answer:1},
+  {q:"Which is an example of a Wide Area Network?", options:["LAN","WAN","MAN","PAN"], answer:1},
+  {q:"Which application is mainly used for sending and receiving emails?", options:["MS Word","MS Excel","Outlook","Notepad"], answer:2},
+  {q:"Which of these is an operating system?", options:["Windows","MS Word","Chrome","PowerPoint"], answer:0},
+  {q:"Which Excel feature is used for calculations?", options:["Cell","Formula","Chart","Graph"], answer:1},
+  {q:"Shortcut key to copy in Windows?", options:["Ctrl + C","Ctrl + V","Ctrl + X","Ctrl + P"], answer:0},
+  {q:"Shortcut key to paste in Windows?", options:["Ctrl + C","Ctrl + V","Ctrl + X","Ctrl + P"], answer:1},
+  {q:"Key to delete character before cursor?", options:["Delete","Backspace","Esc","Enter"], answer:1},
+  {q:"Which protects a PC from malware?", options:["Firewall","Antivirus","Disk Cleanup","Notepad"], answer:1},
+  {q:"Full form of FTP?", options:["File Transfer Protocol","Fast Text Protocol","File Transmission Program","None"], answer:0},
+  {q:"Which is spreadsheet software?", options:["MS Word","MS Excel","MS PowerPoint","MS Access"], answer:1},
+  {q:"Which software is used for slides/presentations?", options:["MS Word","MS Excel","MS PowerPoint","MS Access"], answer:2},
+  {q:"Example of email service?", options:["Gmail","Yahoo Mail","Outlook","All of the above"], answer:3},
+  {q:"Temporary memory for fast processing?", options:["RAM","ROM","Hard Disk","Flash Drive"], answer:0},
+  {q:"Which is a type of malware?", options:["Virus","Worm","Trojan","All of the above"], answer:3},
+  {q:"Common file format for Word?", options:[".xls",".ppt",".doc/.docx",".txt"], answer:2},
+  {q:"Common file format for Excel?", options:[".doc",".xls/.xlsx",".ppt",".txt"], answer:1},
+  {q:"Common file format for PowerPoint?", options:[".ppt/.pptx",".xls",".doc",".txt"], answer:0},
+  {q:"Popular search engine?", options:["Google","Yahoo","Bing","All of the above"], answer:3},
+  {q:"Excel feature for graphs?", options:["Chart","Table","Cell","Formula"], answer:0},
+  {q:"Notepad file extension?", options:[".txt",".doc",".xls",".ppt"], answer:0},
+  {q:"Wireless networking technology?", options:["LAN","Wi-Fi","Ethernet","Cable"], answer:1},
+  {q:"Options to format text in Word?", options:["Font","Bold","Italic","All of the above"], answer:3},
+  {q:"Shortcut to undo action?", options:["Ctrl + Z","Ctrl + Y","Ctrl + X","Ctrl + C"], answer:0},
+  {q:"Shortcut to redo action?", options:["Ctrl + Z","Ctrl + Y","Ctrl + X","Ctrl + C"], answer:1},
+  {q:"Select all text shortcut?", options:["Ctrl + S","Ctrl + A","Ctrl + P","Ctrl + V"], answer:1},
+  {q:"Send instant messages in real-time?", options:["Email","Instant Messaging","Word Document","PowerPoint"], answer:1},
+  {q:"Used for database management?", options:["MS Word","MS Excel","MS Access","MS PowerPoint"], answer:2},
+  {q:"Parts of CPU?", options:["ALU","Control Unit","Registers","All of the above"], answer:3},
+  {q:"Secondary storage device?", options:["RAM","Hard Disk","Cache","Register"], answer:1},
+  {q:"Which is NOT a browser?", options:["Chrome","Firefox","MS Word","Edge"], answer:2},
+  {q:"Open new Word document shortcut?", options:["Ctrl + N","Ctrl + O","Ctrl + S","Ctrl + P"], answer:0},
+  {q:"Send an email using?", options:["Gmail","Outlook","Yahoo Mail","All of the above"], answer:3},
+  {q:"Protect data from unauthorized access?", options:["Password","Antivirus","Firewall","Cache"], answer:0},
+  {q:"Device to connect computers in network?", options:["Router","Printer","Scanner","Keyboard"], answer:0},
+  {q:"Cloud storage service?", options:["Google Drive","OneDrive","Dropbox","All of the above"], answer:3},
+  {q:"GUI stands for?", options:["Graphical User Interface","General User Interaction","Graphical Utility Input","General Utility Interface"], answer:0},
+  {q:"PowerPoint slide layouts?", options:["Title Slide","Content Slide","Blank Slide","All of the above"], answer:3},
+  {q:"Type of computer virus?", options:["Macro Virus","Boot Virus","File Infector","All of the above"], answer:3},
+  {q:"Organize emails?", options:["Folders","Labels","Categories","All of the above"], answer:3},
+  {q:"Mobile OS?", options:["Android","Windows","Linux","MS DOS"], answer:0},
+  {q:"Create tables in Word?", options:["Insert > Table","Home > Table","Format > Table","View > Table"], answer:0},
+  {q:"View webpage source code?", options:["View > Source","Ctrl + U","Right-click > View Page Source","All of the above"], answer:3},
+  {q:"Refresh webpage?", options:["F5","Ctrl + R","Both a and b","None"], answer:2},
+  {q:"Compress files?", options:["WinRAR","7-Zip","WinZip","All of the above"], answer:3}
 ];
 
-  
 
-
-// Status tracking
+// VARIABLES
 let current = 0;
 let userAnswers = new Array(questions.length);
-let questionStatus = new Array(questions.length).fill("not-visited"); // not-visited, visited, answered, review, review-answered
-let timeLeft = 60;
+let questionStatus = new Array(questions.length).fill("not-visited");
+let timeLeft = 60 * 60;
+let timerInterval;
 
-// Load sidebar
+// SIDEBAR
 function loadSidebar() {
   const sb = document.getElementById("questionNumbers");
   sb.innerHTML = "";
@@ -241,100 +213,174 @@ function loadSidebar() {
   });
 }
 
-// Load question
+// LOAD QUESTION
 function loadQuestion() {
   const q = questions[current];
-  document.getElementById("question").innerText = (current + 1) + ". " + q.q;
+  document.getElementById("question").innerText = (current+1)+". "+q.q;
 
-  let optionsHTML = "";
-  q.options.forEach((opt, i) => {
-    optionsHTML += `
-      <label id="label${i}">
-        <input type="radio" name="option" value="${i}" onclick="selectOption(${i})"
-        ${userAnswers[current] == i ? "checked" : ""}>
-        ${opt}
-      </label>
-    `;
+  let optionsHTML="";
+  q.options.forEach((opt,i)=>{
+    optionsHTML+=`
+    <label>
+      <input type="radio" name="option" value="${i}"
+      ${userAnswers[current]==i?"checked":""}
+      onclick="selectOption(${i})">
+      ${opt}
+    </label>`;
   });
-  document.getElementById("options").innerHTML = optionsHTML;
 
-  // Mark visited if first time
-  if(questionStatus[current] === "not-visited") questionStatus[current] = "visited";
+  document.getElementById("options").innerHTML=optionsHTML;
+
+  if(questionStatus[current]=="not-visited")
+    questionStatus[current]="visited";
 
   updateSidebar();
 }
 
-// Select option (but not yet save)
-function selectOption(i) {
-  userAnswers[current] = i;
-  questions[current].options.forEach((_, idx) => {
-    const label = document.getElementById("label" + idx);
-    label.classList.remove("correct","wrong");
-    if(idx===i && idx===questions[current].answer) label.classList.add("correct");
-    if(idx===i && idx!==questions[current].answer) label.classList.add("wrong");
-  });
+// SELECT OPTION
+function selectOption(i){
+  userAnswers[current]=i;
 }
 
-// Save & Next
-function saveNext() {
-  if(userAnswers[current] !== undefined){
-    if(questionStatus[current]==="review") questionStatus[current] = "review-answered";
-    else questionStatus[current] = "answered";
-  } else if(questionStatus[current]!=="review-answered"){
-    questionStatus[current] = "visited";
+// SAVE NEXT
+function saveNext(){
+  if(userAnswers[current]!=undefined)
+    questionStatus[current]="answered";
+  nextQuestion();
+}
+
+// REVIEW
+function markReview(){
+  questionStatus[current]="review";
+  nextQuestion();
+}
+
+function nextQuestion(){
+  if(current<questions.length-1){
+    current++;
+    loadQuestion();
   }
-  nextQuestion();
 }
 
-// Mark for Review
-function markReview() {
-  if(userAnswers[current] !== undefined) questionStatus[current] = "review-answered";
-  else questionStatus[current] = "review";
-  nextQuestion();
+function prevQuestion(){
+  if(current>0){
+    current--;
+    loadQuestion();
+  }
 }
 
-// Next / Previous
-function nextQuestion() { if(current < questions.length-1) { current++; loadQuestion(); } }
-function prevQuestion() { if(current > 0) { current--; loadQuestion(); } }
-
-// Update sidebar colors
-function updateSidebar() {
-  questions.forEach((_, i)=>{
-    const btn = document.getElementById("qBtn"+i);
-    btn.className=""; // reset
-    switch(questionStatus[i]){
-      case "not-visited": btn.classList.add("not-visited"); break;
-      case "visited": btn.classList.add("visited"); break;
-      case "answered": btn.classList.add("answered"); break;
-      case "review": btn.classList.add("review"); break;
-      case "review-answered": btn.classList.add("review","review-answered"); break;
-    }
+// UPDATE SIDEBAR
+function updateSidebar(){
+  questions.forEach((_,i)=>{
+    const btn=document.getElementById("qBtn"+i);
+    btn.className="";
+    btn.classList.add(questionStatus[i]);
   });
 }
 
-// Finish test
-function finishTest(){
+// FINISH TEST
+/*function finishTest(){
+
+  clearInterval(timerInterval); // STOP TIMER
+
   let score=0;
-  userAnswers.forEach((ans,i)=>{ if(ans===questions[i].answer) score++; });
-  document.getElementById("result").innerText = "Final Score: "+score+" / "+questions.length;
+  userAnswers.forEach((ans,i)=>{
+    if(ans===questions[i].answer) score++;
+  });
+
+  document.getElementById("result").innerText =
+  "✅ Test Finished | Score: "+score+" / "+questions.length;
+
+  // Disable all inputs
+  document.querySelectorAll("input").forEach(inp=>inp.disabled=true);
+  document.querySelectorAll(".buttons button").forEach(btn=>btn.disabled=true);
+
+  document.getElementById("homeBtn").style.display="inline-block";
+} */
+
+ function finishTest(){
+
+  clearInterval(timerInterval); // STOP TIMER
+
+  let correct = 0;
+  let wrong = 0;
+  let attempted = 0;
+  let notAttempted = 0;
+
+  let wrongQuestionsHTML = "";
+
+  questions.forEach((q, i) => {
+
+    if(userAnswers[i] === undefined){
+      notAttempted++;
+    } else {
+      attempted++;
+      if(userAnswers[i] === q.answer){
+        correct++;
+      } else {
+        wrong++;
+
+        wrongQuestionsHTML += `
+        <div style="margin-bottom:15px; padding:10px; border:1px solid #ddd; border-radius:6px;">
+          <strong>Q${i+1}. ${q.q}</strong><br>
+          ❌ Your Answer: ${q.options[userAnswers[i]]}<br>
+          ✅ Correct Answer: ${q.options[q.answer]}
+        </div>`;
+      }
+    }
+
+  });
+
+  let percentage = ((correct / questions.length) * 100).toFixed(2);
+
+  document.getElementById("result").innerHTML = `
+  <div style="text-align:left;">
+    <h3>✅ Test Finished</h3>
+    <p><strong>Total Questions:</strong> ${questions.length}</p>
+    <p><strong>Attempted:</strong> ${attempted}</p>
+    <p><strong>Not Attempted:</strong> ${notAttempted}</p>
+    <p><strong>Correct:</strong> ${correct}</p>
+    <p><strong>Wrong:</strong> ${wrong}</p>
+    <p><strong>Percentage:</strong> ${percentage}%</p>
+    <hr>
+    <h3>❌ Wrong Questions Detail</h3>
+    ${wrongQuestionsHTML || "🎉 No Wrong Answers! Excellent Work!"}
+  </div>
+  `;
+
+  // Disable inputs
+  document.querySelectorAll("input").forEach(inp=>inp.disabled=true);
+  document.querySelectorAll(".buttons button").forEach(btn=>btn.disabled=true);
+
+  document.getElementById("homeBtn").style.display="inline-block";
 }
 
-// Timer
+// TIMER
 function startTimer(){
-  const timerInterval=setInterval(()=>{
-    timeLeft--;
-    document.getElementById("timer").innerText="Time Left: "+timeLeft;
+  timerInterval=setInterval(()=>{
     if(timeLeft<=0){
       clearInterval(timerInterval);
       finishTest();
+      return;
     }
+    let m=Math.floor(timeLeft/60);
+    let s=timeLeft%60;
+    document.getElementById("timer").innerText=
+    `Time Left: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    timeLeft--;
   },1000);
 }
 
-// Initialize
+// HOME BUTTON
+function goHome(){
+  window.location.href="https://pcbpcm.in/ccc/";
+}
+
+// INIT
 loadSidebar();
 loadQuestion();
 startTimer();
+
 </script>
 
 </body>
