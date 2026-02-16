@@ -1,163 +1,292 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NEET UG 2025 Information</title>
+  <title>CCC Exam 2026</title>
+
+  <!-- ✅ SEO Meta Tags -->
+  <meta name="description" content="CCC Exam 2026 details including eligibility, syllabus, exam pattern, important dates, and application links.">
+  <meta name="keywords" content="CCC Exam 2026, Course on Computer Concepts, NIELIT, CCC Syllabus, CCC Eligibility, CCC Exam Pattern">
+  <meta name="author" content="CCC Team">
+  <link rel="canonical" href="https://example.com/ccc-exam" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: Arial, sans-serif;
-      background-color: #fff;
-      color: #000;
-      margin: 0;
-      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #f0f9ff, #ffffff);
+      color: #333;
+      line-height: 1.6;
     }
     .container {
       max-width: 1000px;
       margin: auto;
       padding: 20px;
     }
-    .header {
-      background-color: #f4f4f4;
-      padding: 15px;
-      border: 1px solid #ccc;
-      margin-bottom: 20px;
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      z-index: 999;
+      border-bottom: 1px solid #ddd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
-    .important {
-      background-color: #ffeeba;
-      padding: 10px;
-      border-left: 5px solid orange;
-      margin: 20px 0;
+    .navbar-container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .section-title {
-      background-color: #d4edda;
-      padding: 10px;
-      font-weight: bold;
-      margin-top: 30px;
-      border-left: 5px solid green;
+    .logo {
+      font-weight: 700;
+      font-size: 18px;
+      color: #0a58ca;
     }
-    .info-block {
-      margin: 20px 0;
-      padding: 15px;
-      background-color: #f0f8ff;
-      border-left: 5px solid #007bff;
+    .nav-links {
+      display: flex;
+      gap: 20px;
     }
-    .info-block h3 {
-      margin-top: 0;
-      color: #007bff;
-    }
-    .info-block ul {
-      padding-left: 20px;
-    }
-    .link-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 15px 0;
-    }
-    .link-table td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      vertical-align: middle;
-    }
-    .link-table td:first-child {
-      color: purple;
-      font-weight: bold;
-      width: 70%;
-    }
-    .link-table td:last-child {
-      text-align: right;
-    }
-    .link-table td a {
-      background: #007bff;
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 5px;
+    .nav-links a {
       text-decoration: none;
-      white-space: nowrap;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #0a58ca;
+      border-bottom: 2px solid #0a58ca;
+      padding-bottom: 2px;
     }
 
-    /* Responsive */
-    @media (max-width: 600px) {
-      .link-table td {
-        display: block;
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 6px;
+      z-index: 1001;
+    }
+    .hamburger span {
+      height: 3px;
+      width: 25px;
+      background: #333;
+      border-radius: 2px;
+    }
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translateY(8px);
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-links {
+        position: absolute;
+        top: 60px;
+        left: 0;
         width: 100%;
-        text-align: left;
+        flex-direction: column;
+        background: #fff;
+        padding: 10px 0;
+        display: none;
       }
-      .link-table td:last-child {
-        text-align: left;
-        margin-top: 5px;
-      }
+      .nav-links.show { display: flex; }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0d6efd, #66b2ff);
+      color: #fff;
+      padding: 30px 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .important {
+      background-color: #fff3cd;
+      border-left: 6px solid #ffc107;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+
+    .section-title {
+      background-color: #e6f0ff;
+      padding: 14px 20px;
+      font-weight: 600;
+      margin-top: 40px;
+      border-left: 6px solid #0d6efd;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+
+    .info-block {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f0f9ff;
+      border-left: 6px solid #0d6efd;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(13, 110, 253, 0.1);
+    }
+
+    .info-block ul {
+      list-style: disc;
+      padding-left: 20px;
+    }
+
+    .link-card-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .link-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-weight: 500;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    }
+    .link-card:hover {
+      transform: translateY(-2px);
+    }
+    .card-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+    .link-card a {
+      background: #0d6efd;
+      color: white;
+      padding: 8px 14px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    [id]::before {
+      content: '';
+      display: block;
+      height: 70px;
+      margin-top: -70px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <p><strong>Important Instructions for NEET UG</strong></p>
-      <p>All the important content and official links will be available here.</p>
-    </div>
 
-    <!-- Important Notice -->
-    <div class="important">
-      Interested Candidates Can Read the Full NEET UG 2025 Information Brochure Before Apply Online.
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-container">
+      <div class="logo">CCC Exam 2026</div>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links" id="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#eligibility">Eligibility</a>
+        <a href="#syllabus">Syllabus</a>
+        <a href="#exam-pattern">Exam Pattern</a>
+        <a href="#links">Links</a>
+      </div>
     </div>
-
-    <!-- Eligibility -->
-    <div class="info-block">
-      <h3>✅ Eligibility</h3>
-      <p>Candidate must have passed 10+2 with Physics, Chemistry, Biology/Biotechnology with at least 50% marks. For reserved categories, the relaxation rules apply.</p>
-    </div>
-
-    <!-- Important Information -->
-    <div class="info-block">
-      <h3>📝 Important Information</h3>
-      <p><strong>Exam Name:</strong> NEET UG 2025 (National Eligibility cum Entrance Test)</p>
-      <p><strong>Mode of Exam:</strong> Offline (Pen & Paper based OMR test)</p>
-      <p><strong>Duration:</strong> 3 hours 20 minutes (200 minutes)</p>
-      <p><strong>Subjects:</strong> Physics, Chemistry, Biology (Botany & Zoology)</p>
-      <p><strong>Total Questions:</strong> 200 questions (180 to be attempted)</p>
-      <p><strong>Question Type:</strong> Objective Type (Multiple Choice Questions)</p>
-      <p><strong>Sections:</strong></p>
-      <ul>
-        <li>Physics – Section A (35 Qs), Section B (15 Qs - attempt any 10)</li>
-        <li>Chemistry – Section A (35 Qs), Section B (15 Qs - attempt any 10)</li>
-        <li>Biology (Botany + Zoology) – Section A (35 Qs), Section B (15 Qs - attempt any 10)</li>
-      </ul>
-      <p><strong>Total Marks:</strong> 720</p>
-      <p><strong>Marking Scheme:</strong></p>
-      <ul>
-        <li>+4 marks for each correct answer</li>
-        <li>-1 mark for each incorrect answer</li>
-        <li>0 marks for unanswered questions</li>
-      </ul>
-      <p><strong>Medium of Exam:</strong> English, Hindi, and other regional languages as per choice</p>
-    </div>
-
-    <!-- Roadmap -->
-    <div class="info-block">
-      <h3>🗺️ NEET Preparation Roadmap</h3>
-      <p>Start with NCERT books thoroughly. Prepare short notes while studying. Practice chapter-wise PYQs. Take mock tests weekly. Use study planners and flashcards to retain better.</p>
-    </div>
-
-    <!-- Useful Links -->
-    <div class="section-title">Some Useful Important Links</div>
-    <table class="link-table">
-      <tr><td>NEET Syllabus</td><td><a href="https://pcbpcm.in/neet/NEET_Syllabus.pdf" target="_blank">Click Here</a></td></tr>
-      <tr><td>NEET Previous Year Question</td><td><a href="#" target="_blank">Click Here</a></td></tr>
-      <tr><td>NEET Physics Chapter wise PYQ</td><td><a href="#">Click Here</a></td></tr>
-      <tr><td>NEET Chemistry Chapter wise PYQ</td><td><a href="#">Click Here</a></td></tr>
-      <tr><td>NEET Biology Chapter wise PYQ</td><td><a href="#">Click Here</a></td></tr>
-      <tr><td>NEET Physics Chapter wise Notes</td><td><a href="#">Click Here</a></td></tr>
-      <tr><td>NEET Chemistry Chapter wise Notes</td><td><a href="#">Click Here</a></td></tr>
-      <tr><td>NEET Biology Chapter wise Notes</td><td><a href="#">Click Here</a></td></tr>
-      <tr><td>NEET Previous Year Cutoff</td><td><a href="#">Click Here</a></td></tr>
-      <tr><td>NEET Official Site</td><td><a href="#">Click Here</a></td></tr>
-    </table>
   </div>
+
+  <!-- Content -->
+  <div class="container">
+    <div class="header">
+      <h1>CCC Exam 2026</h1>
+      <p>Course on Computer Concepts – NIELIT</p>
+    </div>
+
+    <div class="important">
+      💻 <strong>CCC Exam</strong> evaluates basic computer knowledge and skills for government and private sector opportunities.
+    </div>
+
+    <div id="overview" class="section-title">📅 Program Overview</div>
+    <div class="info-block">
+      <ul>
+        <li>Course: Course on Computer Concepts (CCC)</li>
+        <li>Conducted by: NIELIT (National Institute of Electronics & Information Technology)</li>
+        <li>Mode: Online / Offline Examination</li>
+        <li>Duration: 100 minutes (approx)</li>
+      </ul>
+    </div>
+
+    <div id="eligibility" class="section-title">📄 Eligibility Criteria</div>
+    <div class="info-block">
+      <ul>
+        <li>Anyone who has passed or appeared in 10th / 12th or equivalent can apply</li>
+        <li>No age limit</li>
+        <li>Basic knowledge of computers is recommended</li>
+      </ul>
+    </div>
+
+    <div id="syllabus" class="section-title">📚 Syllabus</div>
+    <div class="info-block">
+      <ul>
+        <li>Introduction to Computers and IT</li>
+        <li>Operating System & Word Processing</li>
+        <li>Spreadsheet, Presentation, Internet & Email</li>
+        <li>Cyber Security & Basic Networking</li>
+      </ul>
+    </div>
+
+    <div id="exam-pattern" class="section-title">📝 Exam Pattern</div>
+    <div class="info-block">
+      <ul>
+        <li>Type: Multiple Choice Questions (MCQ)</li>
+        <li>Total Questions: 100</li>
+        <li>Marks: 100 (1 mark per question)</li>
+        <li>Duration: 2 hours</li>
+        <li>Qualifying Marks: 50%</li>
+      </ul>
+    </div>
+
+    <div id="links" class="section-title">🔗 Important Links</div>
+    <div class="link-card-grid">
+      <div class="link-card"><div class="card-left">📘 CCC Syllabus PDF</div><a href="#">Download</a></div>
+      <div class="link-card"><div class="card-left">📝 CCC Application Portal</div><a href="#">Apply</a></div>
+      <div class="link-card"><div class="card-left">🌐 NIELIT Official Website</div><a href="#">Visit</a></div>
+    </div>
+  </div>
+
+  <!-- Hamburger Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const hamburger = document.getElementById("hamburger");
+      const navLinks = document.getElementById("nav-links");
+
+      hamburger.addEventListener("click", function () {
+        navLinks.classList.toggle("show");
+        hamburger.classList.toggle("open");
+      });
+
+      document.querySelectorAll(".nav-links a").forEach(link => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth <= 768 && navLinks.classList.contains("show")) {
+            navLinks.classList.remove("show");
+            hamburger.classList.remove("open");
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
