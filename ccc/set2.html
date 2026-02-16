@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>50 Question Online MCQ Test with Review</title>
+<title>Online MCQ Test</title>
+
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -15,19 +16,17 @@ body {
 
 .container {
   display: flex;
-  width: 950px;
+  width: 1000px;
   max-width: 100%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   overflow: hidden;
-  flex-wrap: nowrap; /* keep sidebar on right */
 }
 
 .main {
   flex: 1;
   padding: 25px;
-  position: relative;
   min-width: 300px;
 }
 
@@ -52,16 +51,6 @@ body {
   border: 1px solid #ddd;
 }
 
-.options label.correct {
-  background: #c8e6c9;
-  border-color: #4caf50;
-}
-
-.options label.wrong {
-  background: #ffcdd2;
-  border-color: #f44336;
-}
-
 .buttons {
   margin-top: 20px;
   display: flex;
@@ -69,7 +58,7 @@ body {
   gap: 10px;
 }
 
-button.action-btn {
+button {
   padding: 8px 15px;
   border: none;
   border-radius: 6px;
@@ -78,114 +67,78 @@ button.action-btn {
   color: white;
 }
 
-button.action-btn:hover {
-  background: #45a049;
+button:hover {
+  opacity: 0.9;
 }
 
-button.review-btn {
+.review-btn {
   background: #9c27b0;
 }
 
-button.review-btn:hover {
-  background: #7b1fa2;
-}
-
-/* Sidebar on the right */
 .sidebar {
-  width: 200px;
+  width: 220px;
   background: #f5f5f5;
   padding: 10px;
   border-left: 1px solid #ddd;
   display: grid;
-  grid-template-columns: repeat(4, 40px);
+  grid-template-columns: repeat(4, 45px);
   gap: 8px;
   max-height: 650px;
   overflow-y: auto;
-  order: 1; /* ensure it stays on the right */
 }
 
 .sidebar button {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  border: 1px solid #aaa;
-  cursor: pointer;
-  background: #fff;
+  width: 45px;
+  height: 45px;
   font-weight: bold;
 }
 
-.sidebar button.not-visited {
-  background: #fff;
-  color: black;
-}
-
-.sidebar button.visited {
-  background: #f44336; /* red */
-  color: white;
-}
-
-.sidebar button.answered {
-  background: #4caf50; /* green */
-  color: white;
-}
-
-.sidebar button.review {
-  background: #9c27b0; /* purple */
-  color: white;
-}
-
-.sidebar button.review-answered::after {
-  content: "✔️";
-  font-size: 12px;
-  margin-left: 2px;
-}
+.not-visited { background: #fff; color: black; }
+.visited { background: #f44336; color: white; }
+.answered { background: #4caf50; color: white; }
+.review { background: #9c27b0; color: white; }
 
 #result {
   text-align: center;
   font-weight: bold;
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 18px;
 }
 
-/* Mobile responsiveness */
-@media screen and (max-width: 800px) {
-  .container {
-    flex-direction: column; /* stack sidebar below on small screens */
-  }
-  .sidebar {
-    width: 100%;
-    grid-template-columns: repeat(8, 30px);
-    margin-top: 15px;
-  }
+#homeBtn {
+  display: none;
+  margin-top: 15px;
+  background: #2196F3;
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
-  <!-- Main area -->
-  <div class="main">
-    <div id="timer">Time Left: 60:00</div>
-    <div class="question" id="question"></div>
-    <div class="options" id="options"></div>
 
-    <div class="buttons">
-      <button class="action-btn" onclick="prevQuestion()">Previous</button>
-      <button class="action-btn" onclick="saveNext()">Save & Next</button>
-      <button class="review-btn" onclick="markReview()">Mark for Review</button>
-      <button class="action-btn" onclick="finishTest()">Finish</button>
-    </div>
+<div class="main">
+  <div id="timer">Time Left: 60:00</div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
 
-    <div id="result"></div>
+  <div class="buttons">
+    <button onclick="prevQuestion()">Previous</button>
+    <button onclick="saveNext()">Save & Next</button>
+    <button class="review-btn" onclick="markReview()">Mark for Review</button>
+    <button onclick="finishTest()">Finish Test</button>
   </div>
 
-  <!-- Sidebar -->
-  <div class="sidebar" id="questionNumbers"></div>
+  <button id="homeBtn" onclick="goHome()">Go To Home Page</button>
+
+  <div id="result"></div>
+</div>
+
+<div class="sidebar" id="questionNumbers"></div>
+
 </div>
 
 <script>
-// Your 50 questions array remains the same
-// ... (same as previous code)
 
 const questions = [
   {q:"Which of the following is the brain of the computer?", options:["RAM","CPU","Hard Disk","Monitor"], answer:1},
@@ -241,12 +194,14 @@ const questions = [
 ];
 
 
-// Status tracking
+// VARIABLES
 let current = 0;
 let userAnswers = new Array(questions.length);
 let questionStatus = new Array(questions.length).fill("not-visited");
-let timeLeft = 60 * 60; // 60 minutes
+let timeLeft = 60 * 60;
+let timerInterval;
 
+// SIDEBAR
 function loadSidebar() {
   const sb = document.getElementById("questionNumbers");
   sb.innerHTML = "";
@@ -259,94 +214,119 @@ function loadSidebar() {
   });
 }
 
+// LOAD QUESTION
 function loadQuestion() {
   const q = questions[current];
-  document.getElementById("question").innerText = (current + 1) + ". " + q.q;
+  document.getElementById("question").innerText = (current+1)+". "+q.q;
 
-  let optionsHTML = "";
-  q.options.forEach((opt, i) => {
-    optionsHTML += `
-      <label id="label${i}">
-        <input type="radio" name="option" value="${i}" onclick="selectOption(${i})"
-        ${userAnswers[current] == i ? "checked" : ""}>
-        ${opt}
-      </label>
-    `;
+  let optionsHTML="";
+  q.options.forEach((opt,i)=>{
+    optionsHTML+=`
+    <label>
+      <input type="radio" name="option" value="${i}"
+      ${userAnswers[current]==i?"checked":""}
+      onclick="selectOption(${i})">
+      ${opt}
+    </label>`;
   });
-  document.getElementById("options").innerHTML = optionsHTML;
 
-  if(questionStatus[current] === "not-visited") questionStatus[current] = "visited";
+  document.getElementById("options").innerHTML=optionsHTML;
+
+  if(questionStatus[current]=="not-visited")
+    questionStatus[current]="visited";
+
   updateSidebar();
 }
 
-function selectOption(i) {
-  userAnswers[current] = i;
-  questions[current].options.forEach((_, idx) => {
-    const label = document.getElementById("label" + idx);
-    label.classList.remove("correct","wrong");
-    if(idx===i && idx===questions[current].answer) label.classList.add("correct");
-    if(idx===i && idx!==questions[current].answer) label.classList.add("wrong");
-  });
+// SELECT OPTION
+function selectOption(i){
+  userAnswers[current]=i;
 }
 
-function saveNext() {
-  if(userAnswers[current] !== undefined){
-    if(questionStatus[current]==="review") questionStatus[current] = "review-answered";
-    else questionStatus[current] = "answered";
-  } else if(questionStatus[current]!=="review-answered"){
-    questionStatus[current] = "visited";
+// SAVE NEXT
+function saveNext(){
+  if(userAnswers[current]!=undefined)
+    questionStatus[current]="answered";
+  nextQuestion();
+}
+
+// REVIEW
+function markReview(){
+  questionStatus[current]="review";
+  nextQuestion();
+}
+
+function nextQuestion(){
+  if(current<questions.length-1){
+    current++;
+    loadQuestion();
   }
-  nextQuestion();
 }
 
-function markReview() {
-  if(userAnswers[current] !== undefined) questionStatus[current] = "review-answered";
-  else questionStatus[current] = "review";
-  nextQuestion();
+function prevQuestion(){
+  if(current>0){
+    current--;
+    loadQuestion();
+  }
 }
 
-function nextQuestion() { if(current < questions.length-1) { current++; loadQuestion(); } }
-function prevQuestion() { if(current > 0) { current--; loadQuestion(); } }
-
-function updateSidebar() {
-  questions.forEach((_, i)=>{
-    const btn = document.getElementById("qBtn"+i);
+// UPDATE SIDEBAR
+function updateSidebar(){
+  questions.forEach((_,i)=>{
+    const btn=document.getElementById("qBtn"+i);
     btn.className="";
-    switch(questionStatus[i]){
-      case "not-visited": btn.classList.add("not-visited"); break;
-      case "visited": btn.classList.add("visited"); break;
-      case "answered": btn.classList.add("answered"); break;
-      case "review": btn.classList.add("review"); break;
-      case "review-answered": btn.classList.add("review","review-answered"); break;
-    }
+    btn.classList.add(questionStatus[i]);
   });
 }
 
+// FINISH TEST
 function finishTest(){
+
+  clearInterval(timerInterval); // STOP TIMER
+
   let score=0;
-  userAnswers.forEach((ans,i)=>{ if(ans===questions[i].answer) score++; });
-  document.getElementById("result").innerText = "Final Score: "+score+" / "+questions.length;
+  userAnswers.forEach((ans,i)=>{
+    if(ans===questions[i].answer) score++;
+  });
+
+  document.getElementById("result").innerText =
+  "✅ Test Finished | Score: "+score+" / "+questions.length;
+
+  // Disable all inputs
+  document.querySelectorAll("input").forEach(inp=>inp.disabled=true);
+  document.querySelectorAll(".buttons button").forEach(btn=>btn.disabled=true);
+
+  document.getElementById("homeBtn").style.display="inline-block";
 }
 
+// TIMER
 function startTimer(){
-  const timerInterval = setInterval(()=>{
-    if(timeLeft <= 0){
+  timerInterval=setInterval(()=>{
+    if(timeLeft<=0){
       clearInterval(timerInterval);
       finishTest();
       return;
     }
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    document.getElementById("timer").innerText = `Time Left: ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+    let m=Math.floor(timeLeft/60);
+    let s=timeLeft%60;
+    document.getElementById("timer").innerText=
+    `Time Left: ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     timeLeft--;
-  }, 1000);
+  },1000);
 }
 
-// Initialize
+// HOME BUTTON
+function goHome(){
+  window.location.href="https://yourhomepageurl.com";
+}
+
+// INIT
 loadSidebar();
 loadQuestion();
 startTimer();
+
 </script>
 
 </body>
 </html>
+
