@@ -1,26 +1,343 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello Page</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-      margin: 0;
-    }
-    h1 {
-      color: #333;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>50 Question Online MCQ Test with Review</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #eef2f7;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  width: 950px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  padding: 25px;
+  position: relative;
+}
+
+#timer {
+  text-align: right;
+  font-weight: bold;
+  color: red;
+}
+
+.question {
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.options label {
+  display: block;
+  margin: 8px 0;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+}
+
+.options label.correct {
+  background: #c8e6c9;
+  border-color: #4caf50;
+}
+
+.options label.wrong {
+  background: #ffcdd2;
+  border-color: #f44336;
+}
+
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+button.action-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #4CAF50;
+  color: white;
+}
+
+button.action-btn:hover {
+  background: #45a049;
+}
+
+button.review-btn {
+  background: #9c27b0;
+}
+
+button.review-btn:hover {
+  background: #7b1fa2;
+}
+
+/* Sidebar with grid 4 per row */
+.sidebar {
+  width: 200px;
+  background: #f5f5f5;
+  padding: 10px;
+  border-left: 1px solid #ddd;
+  display: grid;
+  grid-template-columns: repeat(4, 40px);
+  gap: 8px;
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.sidebar button {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  cursor: pointer;
+  background: #fff;
+  font-weight: bold;
+}
+
+.sidebar button.not-visited {
+  background: #fff;
+  color: black;
+}
+
+.sidebar button.visited {
+  background: #f44336; /* red */
+  color: white;
+}
+
+.sidebar button.answered {
+  background: #4caf50; /* green */
+  color: white;
+}
+
+.sidebar button.review {
+  background: #9c27b0; /* purple */
+  color: white;
+}
+
+.sidebar button.review-answered::after {
+  content: "✔️";
+  font-size: 12px;
+  margin-left: 2px;
+}
+#result {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 15px;
+  font-size: 18px;
+}
+</style>
 </head>
 <body>
-  <h1>Hello!</h1>
+
+<div class="container">
+  <!-- Main area -->
+  <div class="main">
+    <div id="timer">Time Left: 600</div>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+
+    <div class="buttons">
+      <button class="action-btn" onclick="prevQuestion()">Previous</button>
+      <button class="action-btn" onclick="saveNext()">Save & Next</button>
+      <button class="review-btn" onclick="markReview()">Mark for Review</button>
+      <button class="action-btn" onclick="finishTest()">Finish</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="questionNumbers"></div>
+</div>
+
+<script>
+// 50 sample questions
+const questions = [
+  {q:"What does HTML stand for?", options:["High Text Machine Language","Hyper Text Markup Language","Home Tool Markup Language","Hyperlinks and Text Marking Language"], answer:1},
+  {q:"Which tag is used to insert an image?", options:["<image>","<pic>","<img>","<src>"], answer:2},
+  {q:"Which CSS property changes text color?", options:["font-style","text-color","color","background-color"], answer:2},
+  {q:"Which tag creates a hyperlink?", options:["<link>","<a>","<href>","<hyper>"], answer:1},
+  {q:"Which HTML element is for a paragraph?", options:["<p>","<para>","<paragraph>","<text>"], answer:0},
+  {q:"Which HTML element defines a heading?", options:["<heading>","<h1>","<head>","<title>"], answer:1},
+  {q:"Which is the correct CSS syntax?", options:["body:color=red;","body {color:red;}","{body;color:red;}","body = color:red;"], answer:1},
+  {q:"Which property is used to change background color?", options:["bgcolor","background-color","color","back-color"], answer:1},
+  {q:"Which input type is used for password?", options:["text","password","email","number"], answer:1},
+  {q:"Which attribute is used to open link in new tab?", options:["target='_blank'","href='_blank'","link='_blank'","tab='_blank'"], answer:0},
+  {q:"Which language is used for web structure?", options:["HTML","CSS","Python","JavaScript"], answer:0},
+  {q:"Which language is used for styling web pages?", options:["HTML","CSS","Python","JavaScript"], answer:1},
+  {q:"Which language adds interactivity to web pages?", options:["HTML","CSS","JavaScript","PHP"], answer:2},
+  {q:"Which symbol ends a statement in C?", options:[";","/","*","%"], answer:0},
+  {q:"Which keyword is used to define a function in Python?", options:["function","def","func","define"], answer:1},
+  {q:"Which operator is used for equality in JS?", options:["=","==","===","!="], answer:1},
+  {q:"What is the extension of Python file?", options:[".py",".pt",".pyt",".python"], answer:0},
+  {q:"Which company developed Java?", options:["Microsoft","Sun Microsystems","Apple","Oracle"], answer:1},
+  {q:"Which of the following is a backend language?", options:["HTML","CSS","Java","Bootstrap"], answer:2},
+  {q:"C++ is an extension of which language?", options:["C","Java","Python","HTML"], answer:0},
+  {q:"Which symbol is used for comments in Python?", options:["#","//","<!-- -->","**"], answer:0},
+  {q:"Which tag is used for list items?", options:["<li>","<ul>","<ol>","<list>"], answer:0},
+  {q:"Which tag is used for table row?", options:["<tr>","<td>","<table>","<row>"], answer:0},
+  {q:"Which tag is used for table header?", options:["<th>","<td>","<tr>","<thead>"], answer:0},
+  {q:"Which CSS property is used for font size?", options:["text-size","font-size","size","font-style"], answer:1},
+  {q:"Which input type is used for email?", options:["text","password","email","number"], answer:2},
+  {q:"Which tag is used to display video?", options:["<video>","<media>","<movie>","<clip>"], answer:0},
+  {q:"Which tag is used to embed audio?", options:["<sound>","<audio>","<music>","<media>"], answer:1},
+  {q:"Which HTML element is for a division?", options:["<div>","<section>","<span>","<container>"], answer:0},
+  {q:"Which CSS property sets the width of an element?", options:["width","height","size","length"], answer:0},
+  {q:"Which property controls the text alignment?", options:["align","text-align","position","justify"], answer:1},
+  {q:"Which HTML tag is for a horizontal line?", options:["<hr>","<line>","<hl>","<break>"], answer:0},
+  {q:"Which attribute specifies image source?", options:["src","href","link","img"], answer:0},
+  {q:"Which input type is used for numbers?", options:["text","number","email","password"], answer:1},
+  {q:"Which HTML element defines the title?", options:["<title>","<head>","<h1>","<header>"], answer:0},
+  {q:"Which CSS property changes font style?", options:["font-style","text-style","style","font"], answer:0},
+  {q:"Which HTML element is for links?", options:["<link>","<a>","<href>","<url>"], answer:1},
+  {q:"Which JavaScript event occurs when user clicks?", options:["onclick","onmouseover","onchange","onhover"], answer:0},
+  {q:"Which CSS property changes text color?", options:["color","text-color","font-color","background-color"], answer:0},
+  {q:"Which HTML tag is for ordered list?", options:["<ul>","<ol>","<li>","<list>"], answer:1},
+  {q:"Which HTML tag is for unordered list?", options:["<ul>","<ol>","<li>","<list>"], answer:0},
+  {q:"Which attribute is used for image alt text?", options:["alt","src","title","text"], answer:0},
+  {q:"Which HTML element is for a line break?", options:["<br>","<hr>","<break>","<lb>"], answer:0},
+  {q:"Which CSS property adds spacing inside element?", options:["margin","padding","spacing","border"], answer:1},
+  {q:"Which HTML element is for emphasized text?", options:["<em>","<i>","<b>","<strong>"], answer:0},
+  {q:"Which HTML element is for bold text?", options:["<b>","<strong>","<em>","<i>"], answer:0},
+  {q:"Which attribute sets image width?", options:["width","size","length","height"], answer:0},
+  {q:"Which input type is checkbox?", options:["checkbox","radio","text","button"], answer:0},
+  {q:"Which input type is radio button?", options:["radio","checkbox","text","button"], answer:0},
+  {q:"Which tag is used for forms?", options:["<form>","<input>","<fieldset>","<table>"], answer:0},
+  {q:"Which HTML element is for paragraph?", options:["<p>","<para>","<text>","<paragraph>"], answer:0},
+  {q:"Which CSS property changes element visibility?", options:["visible","display","opacity","visibility"], answer:3},
+  {q:"Which HTML element is for table?", options:["<table>","<tr>","<td>","<th>"], answer:0},
+  {q:"Which attribute specifies placeholder text?", options:["placeholder","hint","value","text"], answer:0},
+  {q:"Which HTML tag is for main heading?", options:["<h1>","<h6>","<header>","<head>"], answer:0}
+];
+
+// Status tracking
+let current = 0;
+let userAnswers = new Array(questions.length);
+let questionStatus = new Array(questions.length).fill("not-visited"); // not-visited, visited, answered, review, review-answered
+let timeLeft = 600;
+
+// Load sidebar
+function loadSidebar() {
+  const sb = document.getElementById("questionNumbers");
+  sb.innerHTML = "";
+  questions.forEach((_, i) => {
+    let btn = document.createElement("button");
+    btn.innerText = i + 1;
+    btn.id = "qBtn" + i;
+    btn.onclick = () => { current = i; loadQuestion(); };
+    sb.appendChild(btn);
+  });
+}
+
+// Load question
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById("question").innerText = (current + 1) + ". " + q.q;
+
+  let optionsHTML = "";
+  q.options.forEach((opt, i) => {
+    optionsHTML += `
+      <label id="label${i}">
+        <input type="radio" name="option" value="${i}" onclick="selectOption(${i})"
+        ${userAnswers[current] == i ? "checked" : ""}>
+        ${opt}
+      </label>
+    `;
+  });
+  document.getElementById("options").innerHTML = optionsHTML;
+
+  // Mark visited if first time
+  if(questionStatus[current] === "not-visited") questionStatus[current] = "visited";
+
+  updateSidebar();
+}
+
+// Select option (but not yet save)
+function selectOption(i) {
+  userAnswers[current] = i;
+  questions[current].options.forEach((_, idx) => {
+    const label = document.getElementById("label" + idx);
+    label.classList.remove("correct","wrong");
+    if(idx===i && idx===questions[current].answer) label.classList.add("correct");
+    if(idx===i && idx!==questions[current].answer) label.classList.add("wrong");
+  });
+}
+
+// Save & Next
+function saveNext() {
+  if(userAnswers[current] !== undefined){
+    if(questionStatus[current]==="review") questionStatus[current] = "review-answered";
+    else questionStatus[current] = "answered";
+  } else if(questionStatus[current]!=="review-answered"){
+    questionStatus[current] = "visited";
+  }
+  nextQuestion();
+}
+
+// Mark for Review
+function markReview() {
+  if(userAnswers[current] !== undefined) questionStatus[current] = "review-answered";
+  else questionStatus[current] = "review";
+  nextQuestion();
+}
+
+// Next / Previous
+function nextQuestion() { if(current < questions.length-1) { current++; loadQuestion(); } }
+function prevQuestion() { if(current > 0) { current--; loadQuestion(); } }
+
+// Update sidebar colors
+function updateSidebar() {
+  questions.forEach((_, i)=>{
+    const btn = document.getElementById("qBtn"+i);
+    btn.className=""; // reset
+    switch(questionStatus[i]){
+      case "not-visited": btn.classList.add("not-visited"); break;
+      case "visited": btn.classList.add("visited"); break;
+      case "answered": btn.classList.add("answered"); break;
+      case "review": btn.classList.add("review"); break;
+      case "review-answered": btn.classList.add("review","review-answered"); break;
+    }
+  });
+}
+
+// Finish test
+function finishTest(){
+  let score=0;
+  userAnswers.forEach((ans,i)=>{ if(ans===questions[i].answer) score++; });
+  document.getElementById("result").innerText = "Final Score: "+score+" / "+questions.length;
+}
+
+// Timer
+function startTimer(){
+  const timerInterval=setInterval(()=>{
+    timeLeft--;
+    document.getElementById("timer").innerText="Time Left: "+timeLeft;
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      finishTest();
+    }
+  },1000);
+}
+
+// Initialize
+loadSidebar();
+loadQuestion();
+startTimer();
+</script>
+
 </body>
 </html>
 
