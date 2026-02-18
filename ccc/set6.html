@@ -110,34 +110,7 @@ button:hover {
   margin-top: 15px;
   background: #2196F3;
 }
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="main">
-  <div id="timer">Time Left: 60:00</div>
-  <div class="question" id="question"></div>
-  <div class="options" id="options"></div>
-
-  <div class="buttons">
-    <button onclick="prevQuestion()">Previous</button>
-    <button onclick="saveNext()">Save & Next</button>
-    <button class="review-btn" onclick="markReview()">Mark for Review</button>
-    <button onclick="finishTest()">Finish Test</button>
-  </div>
-
-  <button id="homeBtn" onclick="goHome()">Go To Home Page</button>
-
-  <div id="result"></div>
-</div>
-
-<div class="sidebar" id="questionNumbers"></div>
-
-</div>
-  @media (max-width: 768px) {
+   @media (max-width: 768px) {
 
 
 body {
@@ -201,6 +174,35 @@ box-sizing: border-box;
   
 
 }
+</style>
+</head>
+  
+
+<body>
+
+<div class="container">
+
+<div class="main">
+  <div id="timer">Time Left: 60:00</div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+
+  <div class="buttons">
+    <button onclick="prevQuestion()">Previous</button>
+    <button onclick="saveNext()">Save & Next</button>
+    <button class="review-btn" onclick="markReview()">Mark for Review</button>
+    <button onclick="finishTest()">Finish Test</button>
+  </div>
+
+  <button id="homeBtn" onclick="goHome()">Go To Home Page</button>
+
+  <div id="result"></div>
+</div>
+
+<div class="sidebar" id="questionNumbers"></div>
+
+</div>
+ 
 
 <script>
 
