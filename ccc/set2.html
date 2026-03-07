@@ -110,7 +110,9 @@ button:hover {
   margin-top: 15px;
   background: #2196F3;
 }
-  @media (max-width: 768px) {
+  /* MOBILE FIX */
+  
+@media (max-width: 768px) {
 
 
 body {
@@ -182,7 +184,7 @@ box-sizing: border-box;
 <div class="container">
 
 <div class="main">
-  <div id="timer">Time Left: 60:00</div>
+  <div id="timer">Time Left: 90:00</div>
   <div class="question" id="question"></div>
   <div class="options" id="options"></div>
 
@@ -203,7 +205,6 @@ box-sizing: border-box;
 </div>
 
 <script>
-
 const questions = [
   {q:"Which of the following is the brain of the computer?", options:["RAM","CPU","Hard Disk","Monitor"], answer:1},
   {q:"Which is a non-volatile memory?", options:["RAM","ROM","Cache","Registers"], answer:1},
@@ -314,7 +315,7 @@ const questions = [
 let current = 0;
 let userAnswers = new Array(questions.length);
 let questionStatus = new Array(questions.length).fill("not-visited");
-let timeLeft = 60 * 60;
+let timeLeft = 90 * 60;
 let timerInterval;
 
 // SIDEBAR
@@ -415,7 +416,7 @@ function updateSidebar(){
   document.getElementById("homeBtn").style.display="inline-block";
 } */
 
- function finishTest(){
+function finishTest(){
 
   clearInterval(timerInterval); // STOP TIMER
 
@@ -440,8 +441,8 @@ function updateSidebar(){
         wrongQuestionsHTML += `
         <div style="margin-bottom:15px; padding:10px; border:1px solid #ddd; border-radius:6px;">
           <strong>Q${i+1}. ${q.q}</strong><br>
-          ❌ Your Answer: ${q.options[userAnswers[i]]}<br>
-          ✅ Correct Answer: ${q.options[q.answer]}
+          ❌ Your Answer: <span style="color:red;">${q.options[userAnswers[i]]}</span><br>
+          ✅ Correct Answer: <span style="color:green;">${q.options[q.answer]}</span>
         </div>`;
       }
     }
@@ -450,18 +451,54 @@ function updateSidebar(){
 
   let percentage = ((correct / questions.length) * 100).toFixed(2);
 
+  // 🔥 GRADE LOGIC
+  let grade = "";
+  let gradeColor = "";
+
+  if (percentage >= 85) { grade = "S (Outstanding)"; gradeColor = "darkgreen"; }
+  else if (percentage >= 75) { grade = "A (Very Good)"; gradeColor = "green"; }
+  else if (percentage >= 65) { grade = "B (Good)"; gradeColor = "blue"; }
+  else if (percentage >= 55) { grade = "C (Satisfactory)"; gradeColor = "orange"; }
+  else if (percentage >= 50) { grade = "D (Pass)"; gradeColor = "brown"; }
+  else { grade = "F (Fail)"; gradeColor = "red"; }
+
   document.getElementById("result").innerHTML = `
   <div style="text-align:left;">
-    <h3>✅ Test Finished</h3>
+    <h3 style="color:#4CAF50;">✅ Test Finished</h3>
+
     <p><strong>Total Questions:</strong> ${questions.length}</p>
-    <p><strong>Attempted:</strong> ${attempted}</p>
-    <p><strong>Not Attempted:</strong> ${notAttempted}</p>
-    <p><strong>Correct:</strong> ${correct}</p>
-    <p><strong>Wrong:</strong> ${wrong}</p>
-    <p><strong>Percentage:</strong> ${percentage}%</p>
+
+    <p><strong>Attempted:</strong> 
+      <span style="color:#2196F3; font-weight:bold;">${attempted}</span>
+    </p>
+
+    <p><strong>Not Attempted:</strong> 
+      <span style="color:#ff9800; font-weight:bold;">${notAttempted}</span>
+    </p>
+
+    <p><strong>Correct:</strong> 
+      <span style="color:#4CAF50; font-weight:bold;">${correct}</span>
+    </p>
+
+    <p><strong>Wrong:</strong> 
+      <span style="color:#f44336; font-weight:bold;">${wrong}</span>
+    </p>
+
+    <p><strong>Marks Obtained:</strong> 
+      <span style="color:#4CAF50; font-weight:bold;">${correct} / ${questions.length}</span>
+    </p>
+
+    <p><strong>Percentage:</strong> 
+      <span style="color:#0d47a1; font-weight:bold;">${percentage}%</span>
+    </p>
+
+    <p><strong>Grade:</strong> 
+      <span style="color:${gradeColor}; font-weight:bold; font-size:20px;">${grade}</span>
+    </p>
+
     <hr>
-    <h3>❌ Wrong Questions Detail</h3>
-    ${wrongQuestionsHTML || "🎉 No Wrong Answers! Excellent Work!"}
+    <h3 style="color:#f44336;">❌ Wrong Questions Detail</h3>
+    ${wrongQuestionsHTML || "<span style='color:#4CAF50; font-weight:bold;'>🎉 No Wrong Answers!!!</span>"}
   </div>
   `;
 
@@ -471,6 +508,7 @@ function updateSidebar(){
 
   document.getElementById("homeBtn").style.display="inline-block";
 }
+
 
 // TIMER
 function startTimer(){
@@ -502,4 +540,3 @@ startTimer();
 
 </body>
 </html>
-
